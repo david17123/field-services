@@ -1,6 +1,7 @@
 {
-  "extends": ["tslint:recommended", "tslint-react"],
+  "extends": ["tslint:recommended"],
   "rules": {
-    "quotemark": [true, "single", "jsx-double"]
+    "quotemark": [true, "single"],
+    "semicolon": [true, "never"]
   }
 }

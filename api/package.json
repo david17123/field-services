@@ -9,8 +9,13 @@
     "start": "nodemon -w ./src/**/*.ts -i ./src/**/*.spec.ts -x 'npx ts-node' ./src/index.ts",
     "lint": "tslint ./src/*"
   },
-  "dependencies": {},
+  "dependencies": {
+    "apollo-server": "^2.9.3",
+    "graphql": "^14.5.4",
+    "lodash": "^4.17.15"
+  },
   "devDependencies": {
+    "@types/lodash": "^4.14.138",
     "clean-webpack-plugin": "^3.0.0",
     "nodemon": "^1.19.2",
     "ts-loader": "^6.0.4",

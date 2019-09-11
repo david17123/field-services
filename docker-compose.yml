@@ -1,0 +1,25 @@
+version: "3.5"
+services:
+
+  db:
+    image: "mongo:4.2-bionic"
+    ports:
+      - "27017:27017"
+
+  api:
+    build: ./api/
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./api:/app
+    ports:
+      - "5000:5000"
+
+  web:
+    build: ./ui/
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./ui:/app
+    ports:
+      - "8080:8080"

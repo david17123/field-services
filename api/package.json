@@ -1,0 +1,25 @@
+{
+  "name": "roster",
+  "version": "0.0.1",
+  "description": "Field service API server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --env.production",
+    "start": "nodemon -w ./src/**/*.ts -i ./src/**/*.spec.ts -x 'npx ts-node' ./src/index.ts",
+    "lint": "tslint ./src/*"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "clean-webpack-plugin": "^3.0.0",
+    "nodemon": "^1.19.2",
+    "ts-loader": "^6.0.4",
+    "ts-node": "^8.3.0",
+    "tslint": "^5.19.0",
+    "typescript": "^3.6.2",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.7"
+  },
+  "author": "",
+  "license": "ISC"
+}

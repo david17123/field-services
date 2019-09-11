@@ -5,6 +5,10 @@ import {
   resolvers as deviceResolvers,
   typeDefs as deviceTypeDefs,
 } from './device'
+import {
+  resolvers as driverResolvers,
+  typeDefs as driverTypeDefs,
+} from './driver'
 
 const baseTypeDefs = gql`
   type Query {
@@ -15,11 +19,17 @@ const baseTypeDefs = gql`
     _empty: String
   }
 `
+const resolvers = merge(
+  {},
+  deviceResolvers,
+  driverResolvers,
+)
+
 const typeDefs = [
   baseTypeDefs,
   deviceTypeDefs,
+  driverTypeDefs,
 ]
-const resolvers = merge({}, deviceResolvers)
 
 const server = new ApolloServer({ resolvers, typeDefs })
 

@@ -1,39 +1,38 @@
 import { gql } from 'apollo-server'
 
-interface IDeviceDetails {
-  os: string,
-  os_version: string,
-}
-
+// TODO There might be a way to generate these interfaces from the schema
 interface IGeojsonPoint {
   type: 'Point',
   coordinates: number[],
 }
 
+interface IReportLocationArgs {
+  sessioNToken: string,
+  point: IGeojsonPoint,
+}
+
 export const typeDefs = gql`
   input GeojsonPointInput {
-    type: String,
+    type: String
     coordinates: [Float]
   }
 
   extend type Mutation {
-    device(os: String, os_version: String): DeviceMutation
+    device: DeviceMutation
   }
 
   type DeviceMutation {
-    reportLocation(point: GeojsonPointInput!): Boolean
+    reportLocation(sessionToken: String, point: GeojsonPointInput!): Boolean
   }
 `
 
 export const resolvers = {
   Mutation: {
-    device: (root: any, args: any) => {
-      return args
-    },
+    device: () => ({}),
   },
 
   DeviceMutation: {
-    reportLocation: (root: IDeviceDetails, args: {point: IGeojsonPoint}) => {
+    reportLocation: (root: any, args: IReportLocationArgs) => {
       // TODO Store location to database
       return true
     },

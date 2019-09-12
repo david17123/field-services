@@ -2,6 +2,7 @@
   "extends": ["tslint:recommended", "tslint-react"],
   "rules": {
     "quotemark": [true, "single", "jsx-double"],
-    "semicolon": [true, "never"]
+    "semicolon": [true, "never"],
+    "jsx-boolean-value": false
   }
 }

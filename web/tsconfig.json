@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
     "sourceMap": true,
+    "lib": ["es6", "dom"],
     "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "jsx": "react"

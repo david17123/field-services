@@ -3,6 +3,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import { client as graphqlClient } from './apollo'
+import Main from './components/Main'
 
 const getMountPoint = (id: string = 'root'): HTMLElement => {
   let rootEl = document.getElementById(id)
@@ -17,7 +18,7 @@ const getMountPoint = (id: string = 'root'): HTMLElement => {
 ReactDOM.render(
   (
     <ApolloProvider client={graphqlClient}>
-      <div>Hello world</div>
+      <Main />
     </ApolloProvider>
   ),
   getMountPoint('root'),

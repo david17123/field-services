@@ -3,6 +3,8 @@
   "rules": {
     "quotemark": [true, "single", "jsx-double"],
     "semicolon": [true, "never"],
-    "jsx-boolean-value": false
+    "jsx-boolean-value": false,
+    "jsx-no-multiline-js": false,
+    "object-literal-key-quotes": [true, "as-needed"]
   }
 }

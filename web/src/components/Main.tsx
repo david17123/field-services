@@ -137,6 +137,7 @@ export default function Main() {
                 columns={columnsSpec}
                 data={mockData}
                 rowKey="sessionId"
+                maxHeight={1200}
               />
             </Card>
           </Grid>

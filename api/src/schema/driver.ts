@@ -8,7 +8,7 @@ interface IDriverInput {
 
 interface IDeviceInput {
   os: string,
-  os_version: string,
+  osVersion: string,
 }
 
 interface ILoginArgs {
@@ -16,8 +16,12 @@ interface ILoginArgs {
   dveice: IDeviceInput,
 }
 
+interface ILogoutArgs {
+  sessionId: string,
+}
+
 interface ISetVehicleArgs {
-  vehicle_id: string,
+  vehicleId: string,
 }
 
 export const typeDefs = gql`
@@ -28,7 +32,7 @@ export const typeDefs = gql`
 
   input DeviceDetailsInput {
     os: String
-    os_version: String
+    osVersion: String
   }
 
   extend type Mutation {
@@ -37,12 +41,13 @@ export const typeDefs = gql`
 
   type DriverMutation {
     login(driver: DriverInput!, device: DeviceDetailsInput!): LoginResponse
-    setVehicle(vehicle_id: ID): Boolean
+    logout(sessionId: String): Boolean
+    setVehicle(vehicleId: ID): Boolean
   }
 
   type LoginResponse {
     sessionToken: String
-    driver_id: ID
+    driverId: ID
   }
 `
 
@@ -57,10 +62,17 @@ export const resolvers = {
     login: (root: any, args: ILoginArgs) => {
       // TODO Should authenticate driver's credentials
       // TODO Create session token for validated driver
+      // TODO Add activity log entry
       return {sessionToken: 'tokenStringStub', driver_id: 'D1234'}
+    },
+    logout: (root: any, args: ILogoutArgs) => {
+      // TODO Remove session from active sessions list
+      // TODO Add activity log entry
+      return true
     },
     setVehicle: (root: any, args: ISetVehicleArgs) => {
       // TODO Note down that Driver is using this particular vehicle
+      // TODO Add activity log entry
       return true
     },
   },

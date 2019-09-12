@@ -25,18 +25,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingTop: theme.spacing(2),
   },
   tdNoData: {
+    color: theme.palette.text.hint,
     fontStyle: 'italic',
     padding: theme.spacing(2),
     textAlign: 'center',
-    color: theme.palette.text.hint,
   },
   thead: {
     textAlign: 'left',
   },
   trBody: (props: ITableProps) => ({
-    '&:hover': {
-      backgroundColor: props.onRowClick ? theme.palette.grey[50] : 'inherit',
-    },
     '&:last-child': {
       borderBottom: 'none',
     },
@@ -45,12 +42,20 @@ const useStyles = makeStyles((theme: Theme) => ({
     cursor: props.onRowClick ? 'pointer' : 'default',
   }),
   trHead: {
-    '&:hover': {
-      backgroundColor: 'inherit',
-    },
     borderBottom: 'solid 1px',
     borderBottomColor: theme.palette.divider,
     cursor: 'default',
+  },
+  trNotSelected: (props: ITableProps) => ({
+    '&:hover': {
+      backgroundColor: props.onRowClick ? theme.palette.grey[50] : 'inherit',
+    },
+  }),
+  trSelected: {
+    '&:hover': {
+      backgroundColor: theme.palette.grey[200],
+    },
+    backgroundColor: theme.palette.grey[200],
   },
 }))
 
@@ -94,6 +99,7 @@ interface ITableProps {
   columns: Array<IColSpec | string>
   rowKey: ((row: {[key: string]: any}) => string) | string
   maxHeight?: number | string
+  selectedEntries?: Array<{[key: string]: any}>
 }
 
 export default function Table(props: ITableProps) {
@@ -104,6 +110,19 @@ export default function Table(props: ITableProps) {
       return row[props.rowKey]
     }
     return props.rowKey(row)
+  }
+
+  const selectedEntriesHash: {[key: string]: boolean} = {}
+  if (props.selectedEntries) {
+    for (const entry of props.selectedEntries) {
+      selectedEntriesHash[getRowKey(entry)] = true
+    }
+  }
+
+  const handleRowClick = (row: {[key: string]: any}) => () => {
+    if (props.onRowClick) {
+      props.onRowClick(row)
+    }
   }
 
   return (
@@ -123,7 +142,15 @@ export default function Table(props: ITableProps) {
         </thead>
         <tbody>
           {props.data.map((rowData) => (
-            <tr className={classes.trBody} key={getRowKey(rowData)}>
+            <tr
+              className={clsx(
+                classes.trBody,
+                !selectedEntriesHash[getRowKey(rowData)] && classes.trNotSelected,
+                selectedEntriesHash[getRowKey(rowData)] && classes.trSelected,
+              )}
+              key={getRowKey(rowData)}
+              onClick={handleRowClick(rowData)}
+            >
               {props.columns.map((colSpec) => (
                 <td
                   className={clsx(classes.tcell, typeof colSpec === 'object' && colSpec.className)}

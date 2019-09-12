@@ -110,6 +110,15 @@ export default function Main() {
     filterCategory: 'driver',
     filterText: '',
   })
+  const [selectedActiveSession, setSelectedActiveSession] = React.useState<any>(null)
+
+  const handleRowClick = (row: any) => {
+    if (selectedActiveSession !== null && selectedActiveSession.sessionId === row.sessionId) {
+      setSelectedActiveSession(null)
+    } else {
+      setSelectedActiveSession(row)
+    }
+  }
 
   const columnsSpec: Array<IColSpec | string> = [
     {
@@ -153,6 +162,8 @@ export default function Main() {
                 data={applyFilterToActiveSession(filterValue, mockData)}
                 rowKey="sessionId"
                 maxHeight={1200}
+                onRowClick={handleRowClick}
+                selectedEntries={selectedActiveSession ? [selectedActiveSession] : []}
               />
             </Card>
           </Grid>

@@ -29,7 +29,7 @@ export const typeDefs = gql`
   }
 
   type SessionQuery {
-    getActiveSessions: Session
+    getActiveSessions: [Session]
     getSessionHistory(driverId: String, regNumber: String): [Session]
   }
 

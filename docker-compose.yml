@@ -18,11 +18,11 @@ services:
       - db
 
   web:
-    build: ./ui/
+    build: ./web/
     environment:
       - NODE_ENV=development
     volumes:
-      - ./ui:/app
+      - ./web:/app
     ports:
       - "8080:8080"
     depends_on:

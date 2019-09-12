@@ -4,20 +4,26 @@
   "description": "Field service API server",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "build": "webpack --env.production",
-    "start": "nodemon -w ./src/**/*.ts -i ./src/**/*.spec.ts -x 'npx ts-node' ./src/index.ts",
+    "start": "nodemon -w './src/**/*.ts' -i './src/**/*.spec.ts' -x 'npx ts-node' ./src/index.ts",
     "lint": "tslint ./src/*"
   },
   "dependencies": {
     "apollo-server": "^2.9.3",
     "graphql": "^14.5.4",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "mongodb": "^3.3.2"
   },
   "devDependencies": {
+    "@shelf/jest-mongodb": "^1.1.0",
+    "@types/jest": "^24.0.18",
     "@types/lodash": "^4.14.138",
+    "@types/mongodb": "^3.3.1",
     "clean-webpack-plugin": "^3.0.0",
+    "jest": "^24.9.0",
     "nodemon": "^1.19.2",
+    "ts-jest": "^24.0.2",
     "ts-loader": "^6.0.4",
     "ts-node": "^8.3.0",
     "tslint": "^5.19.0",

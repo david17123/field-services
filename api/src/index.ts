@@ -2,13 +2,13 @@ import { ApolloServer, gql } from 'apollo-server'
 import { merge } from 'lodash'
 
 import {
-  resolvers as deviceResolvers,
-  typeDefs as deviceTypeDefs,
-} from './device'
-import {
   resolvers as driverResolvers,
   typeDefs as driverTypeDefs,
-} from './driver'
+} from './schema/driver'
+import {
+  resolvers as sessionResolvers,
+  typeDefs as sessionTypeDefs,
+} from './schema/session'
 
 const baseTypeDefs = gql`
   type Query {
@@ -21,13 +21,13 @@ const baseTypeDefs = gql`
 `
 const resolvers = merge(
   {},
-  deviceResolvers,
+  sessionResolvers,
   driverResolvers,
 )
 
 const typeDefs = [
   baseTypeDefs,
-  deviceTypeDefs,
+  sessionTypeDefs,
   driverTypeDefs,
 ]
 

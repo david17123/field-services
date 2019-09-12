@@ -89,6 +89,21 @@ const mockData = [
 ]
 /* tslint:enable */
 
+const applyFilterToActiveSession = (filterValue: IFilterValue, data: any[]) => {
+  const regex = new RegExp(filterValue.filterText, 'i')
+  if (filterValue.filterCategory === 'driver') {
+    return data.filter((session) => {
+      const fullName = `${session.driver.firstName} ${session.driver.firstName}`
+      return regex.test(fullName)
+    })
+  } else {
+    return data.filter((session) => {
+      const vehicle = `${session.vehicle.regNumber} ${session.vehicle.vehicleType}`
+      return regex.test(vehicle)
+    })
+  }
+}
+
 export default function Main() {
   const classes = useStyles({})
   const [filterValue, setFilterValue] = React.useState<IFilterValue>({
@@ -135,14 +150,21 @@ export default function Main() {
               />
               <Table
                 columns={columnsSpec}
-                data={mockData}
+                data={applyFilterToActiveSession(filterValue, mockData)}
                 rowKey="sessionId"
                 maxHeight={1200}
               />
             </Card>
           </Grid>
           <Grid item xs={12} lg={6}>
-            <Card>This is for map view</Card>
+            <Card>
+              <Typography
+                style={{ height: '400px', lineHeight: '400px', backgroundColor: '#eaeaea' }}
+                align="center"
+              >
+                Placeholder for map view
+              </Typography>
+            </Card>
           </Grid>
         </Grid>
       </Container>

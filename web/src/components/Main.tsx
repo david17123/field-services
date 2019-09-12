@@ -9,6 +9,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 
+import SessionFilterInput, { IFilterValue } from './SessionFilterInput'
 import Table, { IColSpec } from './Table'
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -90,6 +91,10 @@ const mockData = [
 
 export default function Main() {
   const classes = useStyles({})
+  const [filterValue, setFilterValue] = React.useState<IFilterValue>({
+    filterCategory: 'driver',
+    filterText: '',
+  })
 
   const columnsSpec: Array<IColSpec | string> = [
     {
@@ -105,6 +110,8 @@ export default function Main() {
       header: 'Location (lat, long)',
     },
   ]
+
+  const handleFilterChange = (value: IFilterValue) => setFilterValue(value)
 
   return (
     <React.Fragment>
@@ -122,6 +129,10 @@ export default function Main() {
         <Grid container spacing={3}>
           <Grid item xs={12} lg={6}>
             <Card>
+              <SessionFilterInput
+                value={filterValue}
+                onChange={handleFilterChange}
+              />
               <Table
                 columns={columnsSpec}
                 data={mockData}

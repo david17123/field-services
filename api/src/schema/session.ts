@@ -13,6 +13,11 @@ interface IReportLocationArgs {
   point: IGeojsonPoint,
 }
 
+interface IGetSessionHistoryArgs {
+  driverId: string,
+  regNumber: string,
+}
+
 export const typeDefs = gql`
   input GeojsonPointInput {
     type: String
@@ -25,6 +30,7 @@ export const typeDefs = gql`
 
   type SessionQuery {
     getActiveSessions: Session
+    getSessionHistory(driverId: String, regNumber: String): [Session]
   }
 
   type Session {
@@ -70,6 +76,16 @@ export const resolvers = {
       const db = await getDb()
       const activeSessionCollection = db.collection('activeSession')
       return activeSessionCollection.find().toArray()
+    },
+    getSessionHistory: async (root: any, args: IGetSessionHistoryArgs) => {
+      const db = await getDb()
+      const sessionHistoryCollection = db.collection('sessionHistory')
+      if (args.driverId) {
+        return sessionHistoryCollection.find({ driverId: args.driverId }).toArray()
+      } else if (args.regNumber) {
+        return sessionHistoryCollection.find({ 'vehicle.regNumber': args.regNumber }).toArray()
+      }
+      return []
     },
   },
 

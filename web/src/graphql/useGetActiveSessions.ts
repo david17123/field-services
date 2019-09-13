@@ -1,3 +1,8 @@
+import { useQuery } from '@apollo/react-hooks'
+import gql from 'graphql-tag'
+
+import { ISession } from './useGetActiveSessions'
+
 interface IGeojsonPoint {
   type: 'Point'
   coordinates: number[]
@@ -28,77 +33,45 @@ export interface ISession {
   timestamp: Date
 }
 
-/* tslint:disable */
-const mockData: ISession[] = [
-  {
-    sessionId: '123',
-    device: {
-      os: 'ios',
-      osVersion: '10.0.0',
-      location: {
-        type: 'Point',
-        coordinates: [10, 20.1],
-      },
-    },
-    driver: {
-      id: 'abcd',
-      firstName: 'John',
-      lastName: 'Doe',
-    },
-    vehicle: {
-      regNumber: 'abc123',
-      vehicleType: 'van',
-    },
-    timestamp: new Date('2019-09-13T08:36:12'),
-  },
-  {
-    sessionId: '456',
-    device: {
-      os: 'android',
-      osVersion: '8.4.0',
-      location: {
-        type: 'Point',
-        coordinates: [12, 29.4],
-      },
-    },
-    driver: {
-      id: 'efgh',
-      firstName: 'Beth',
-      lastName: 'Simon',
-    },
-    vehicle: {
-      regNumber: 'def456',
-      vehicleType: 'truck',
-    },
-    timestamp: new Date('2019-09-13T08:36:20'),
-  },
-  {
-    sessionId: '789',
-    device: {
-      os: 'ios',
-      osVersion: '11.3.0',
-      location: {
-        type: 'Point',
-        coordinates: [8, 40.3],
-      },
-    },
-    driver: {
-      id: 'ijkl',
-      firstName: 'Rose',
-      lastName: 'McCarthy',
-    },
-    vehicle: {
-      regNumber: 'ghi789',
-      vehicleType: 'ute',
-    },
-    timestamp: new Date('2019-09-13T08:36:47'),
-  },
-]
-/* tslint:enable */
+const GET_ACTIVE_SESSIONS = gql`
+  query getActiveSessions {
+    session {
+      getActiveSessions {
+        sessionId
+        device {
+          location {
+            type
+            coordinates
+          }
+        }
+        driver {
+          id
+          firstName
+          lastName
+        }
+        vehicle {
+          regNumber
+          vehicleType
+        }
+        timestamp
+      }
+    }
+  }
+`
 
 export default function useGetActiveSessions() {
+  const { data, loading } = useQuery(GET_ACTIVE_SESSIONS)
+
+  let activeSessions: ISession[] | null = null
+  if (!loading && data) {
+    activeSessions = data.session.getActiveSessions.map((session: any) => ({
+      ...session,
+      timestamp: new Date(session.timestamp),
+    }))
+  }
+
   return {
-    activeSessions: mockData,
-    loading: false,
+    activeSessions,
+    loading,
   }
 }

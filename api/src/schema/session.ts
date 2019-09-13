@@ -5,18 +5,19 @@ import { getDb } from '../db/connection'
 
 // TODO There might be a way to generate these interfaces from the schema
 interface IGeojsonPoint {
-  type: 'Point',
-  coordinates: number[],
+  type: 'Point'
+  coordinates: number[]
 }
 
 interface IReportLocationArgs {
-  sessionId: string,
-  point: IGeojsonPoint,
+  sessionId: string
+  point: IGeojsonPoint
 }
 
 interface IGetSessionHistoryArgs {
-  driverId: string,
-  regNumber: string,
+  driverId: string
+  regNumber: string
+  sessionId: string
 }
 
 export const typeDefs = gql`
@@ -31,7 +32,7 @@ export const typeDefs = gql`
 
   type SessionQuery {
     getActiveSessions: [Session]
-    getSessionHistory(driverId: String, regNumber: String): [Session]
+    getSessionHistory(driverId: String, regNumber: String, sessionId: String): [Session]
   }
 
   type Driver {
@@ -97,6 +98,8 @@ export const resolvers = {
         return sessionHistoryCollection.find({ driverId: args.driverId }).toArray()
       } else if (args.regNumber) {
         return sessionHistoryCollection.find({ 'vehicle.regNumber': args.regNumber }).toArray()
+      } else if (args.sessionId) {
+        return sessionHistoryCollection.find({ sessionId: args.sessionId }).toArray()
       }
       return []
     },

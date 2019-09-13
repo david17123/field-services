@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"fieldservices.sessionHistory"}],"uuid":"8e53988006ef4f20a312731d249689b1"}

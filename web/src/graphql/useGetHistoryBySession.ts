@@ -1,76 +1,51 @@
+import { useQuery } from '@apollo/react-hooks'
+import gql from 'graphql-tag'
+
 import { ISession } from './useGetActiveSessions'
 
-/* tslint:disable */
-const mockHistory: ISession[] = [
-  {
-    sessionId: '123',
-    device: {
-      os: 'ios',
-      osVersion: '10.0.0',
-      location: {
-        type: 'Point',
-        coordinates: [10, 20.1],
-      },
-    },
-    driver: {
-      id: 'abcd',
-      firstName: 'John',
-      lastName: 'Doe',
-    },
-    vehicle: {
-      regNumber: 'abc123',
-      vehicleType: 'van',
-    },
-    timestamp: new Date('2019-09-13T08:36:12'),
-  },
-  {
-    sessionId: '123',
-    device: {
-      os: 'ios',
-      osVersion: '10.0.0',
-      location: {
-        type: 'Point',
-        coordinates: [12, 21.1],
-      },
-    },
-    driver: {
-      id: 'abcd',
-      firstName: 'John',
-      lastName: 'Doe',
-    },
-    vehicle: {
-      regNumber: 'abc123',
-      vehicleType: 'van',
-    },
-    timestamp: new Date('2019-09-13T08:35:12'),
-  },
-  {
-    sessionId: '123',
-    device: {
-      os: 'ios',
-      osVersion: '10.0.0',
-      location: {
-        type: 'Point',
-        coordinates: [13, 18.6],
-      },
-    },
-    driver: {
-      id: 'abcd',
-      firstName: 'John',
-      lastName: 'Doe',
-    },
-    vehicle: {
-      regNumber: 'abc123',
-      vehicleType: 'van',
-    },
-    timestamp: new Date('2019-09-13T08:34:12'),
-  },
-]
-/* tslint:enable */
+const GET_ACTIVE_SESSIONS = gql`
+  query getSessionHistory($sessionId: String) {
+    session {
+      getSessionHistory(sessionId: $sessionId) {
+        sessionId
+        device {
+          location {
+            type
+            coordinates
+          }
+        }
+        driver {
+          id
+          firstName
+          lastName
+        }
+        vehicle {
+          regNumber
+          vehicleType
+        }
+        timestamp
+      }
+    }
+  }
+`
 
 export default function useGetHistoryBySession(sessionId: string) {
+  const { data, loading } = useQuery(GET_ACTIVE_SESSIONS, {
+    variables: {
+      sessionId,
+    },
+  })
+
+  let history: ISession[] | null = null
+  if (!loading && data) {
+    history = data.session.getSessionHistory.map((session: any) => ({
+      ...session,
+      timestamp: new Date(session.timestamp),
+    }))
+  }
+
   return {
-    history: mockHistory,
-    loading: false,
+    history,
+    loading,
   }
 }

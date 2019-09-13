@@ -3,6 +3,7 @@ import React from 'react'
 import AppBar from '@material-ui/core/AppBar'
 import Box from '@material-ui/core/Box'
 import Card from '@material-ui/core/Card'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import Container from '@material-ui/core/Container'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Grid from '@material-ui/core/Grid'
@@ -90,28 +91,54 @@ export default function Main() {
           {/* TODO Both the active sessions list and map view can be factored out to simplify Main */}
           <Grid item xs={12} lg={6}>
             <Card>
-              <SessionFilterInput
-                value={filterValue}
-                onChange={handleFilterChange}
-              />
-              <Table
-                columns={activeSessionColumnSpec}
-                data={applyFilterToActiveSession(filterValue, activeSessions)}
-                rowKey="sessionId"
-                maxHeight={1200}
-                onRowClick={handleRowClick}
-                selectedEntries={selectedActiveSession ? [selectedActiveSession] : []}
-              />
+              {loading && (
+                <Box
+                  height={400}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <CircularProgress />
+                </Box>
+              )}
+              {!loading && activeSessions !== null && (
+                <React.Fragment>
+                  <SessionFilterInput
+                    value={filterValue}
+                    onChange={handleFilterChange}
+                  />
+                  <Table
+                    columns={activeSessionColumnSpec}
+                    data={applyFilterToActiveSession(filterValue, activeSessions)}
+                    rowKey="sessionId"
+                    maxHeight={1200}
+                    onRowClick={handleRowClick}
+                    selectedEntries={selectedActiveSession ? [selectedActiveSession] : []}
+                  />
+                </React.Fragment>
+              )}
             </Card>
           </Grid>
           <Grid item xs={12} lg={6}>
             <Card>
-              <Typography
-                style={{ height: '400px', lineHeight: '400px', backgroundColor: '#eaeaea' }}
-                align="center"
-              >
-                Placeholder for map view
-              </Typography>
+              {loading && (
+                <Box
+                  height={400}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <CircularProgress />
+                </Box>
+              )}
+              {!loading && (
+                <Typography
+                  style={{ height: '400px', lineHeight: '400px', backgroundColor: '#eaeaea' }}
+                  align="center"
+                >
+                  Placeholder for map view
+                </Typography>
+              )}
             </Card>
           </Grid>
           {selectedActiveSession && (

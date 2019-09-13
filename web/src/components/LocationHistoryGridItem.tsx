@@ -2,6 +2,7 @@ import React from 'react'
 
 import Box from '@material-ui/core/Box'
 import Card from '@material-ui/core/Card'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 
@@ -40,11 +41,23 @@ export default function LocationHistoryGridItem(props: ILocationHistoryGridItemP
             {`${props.session.vehicle.regNumber} (${props.session.vehicle.vehicleType})`}
           </Typography>
         </Box>
-        <Table
-          columns={historyColumnSpec}
-          data={history}
-          rowKey={historyRowKey}
-        />
+        {loading && (
+          <Box
+            height={250}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <CircularProgress />
+          </Box>
+        )}
+        {!loading && history !== null && (
+          <Table
+            columns={historyColumnSpec}
+            data={history}
+            rowKey={historyRowKey}
+          />
+        )}
       </Card>
     </Grid>
   )

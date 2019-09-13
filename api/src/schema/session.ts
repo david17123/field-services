@@ -1,4 +1,5 @@
 import { gql } from 'apollo-server'
+import { ObjectID } from 'mongodb'
 
 import { getDb } from '../db/connection'
 
@@ -33,12 +34,24 @@ export const typeDefs = gql`
     getSessionHistory(driverId: String, regNumber: String): [Session]
   }
 
+  type Driver {
+    id: ID
+    username: String
+    firstName: String
+    lastName: String
+    mobileNumber: String
+    profilePicture: String
+    "This is datetime value in ISO 8601 format"
+    lastLogin: String # TODO Should create and use a new scalar Date for this
+  }
+
   type Session {
     sessionId: String
     device: Device
-    driverId: String
+    driver: Driver
     vehicle: Vehicle
-    timestamp: String
+    "This is datetime value in ISO 8601 format"
+    timestamp: String # TODO Should create and use a new scalar Date for this
   }
 
   type Device {
@@ -87,6 +100,23 @@ export const resolvers = {
       }
       return []
     },
+  },
+
+  Session: {
+    driver: async (session: any) => {
+      const db = await getDb()
+      const driverCollection = db.collection('driver')
+      const driver = await driverCollection.find({ _id: new ObjectID(session.driverId) }).toArray()
+      if (driver && driver.length > 0) {
+        return driver[0]
+      }
+      return {}
+    },
+    timestamp: (session: any) => session.timestamp.toISOString(),
+  },
+
+  Driver: {
+    id: (driver: any) => driver._id,
   },
 
   Mutation: {

@@ -10,6 +10,8 @@ import { makeStyles, Theme } from '@material-ui/core/styles'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 
+import useGetActiveSessions, { ISession } from '../graphql/useGetActiveSessions'
+import LocationHistoryGridItem from './LocationHistoryGridItem'
 import SessionFilterInput, { IFilterValue } from './SessionFilterInput'
 import Table, { IColSpec } from './Table'
 
@@ -22,141 +24,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }))
 
-/* tslint:disable */
-const mockData = [
-  {
-    sessionId: '123',
-    device: {
-      os: 'ios',
-      osVersion: '10.0.0',
-      location: {
-        type: 'Point',
-        coordinates: [10, 20.1],
-      },
-    },
-    driver: {
-      id: 'abcd',
-      firstName: 'John',
-      lastName: 'Doe',
-    },
-    vehicle: {
-      regNumber: 'abc123',
-      vehicleType: 'van',
-    },
-    timestamp: new Date('2019-09-13T08:36:12'),
-  },
-  {
-    sessionId: '456',
-    device: {
-      os: 'android',
-      osVersion: '8.4.0',
-      location: {
-        type: 'Point',
-        coordinates: [12, 29.4],
-      },
-    },
-    driver: {
-      id: 'efgh',
-      firstName: 'Beth',
-      lastName: 'Simon',
-    },
-    vehicle: {
-      regNumber: 'def456',
-      vehicleType: 'truck',
-    },
-    timestamp: new Date('2019-09-13T08:36:20'),
-  },
-  {
-    sessionId: '789',
-    device: {
-      os: 'ios',
-      osVersion: '11.3.0',
-      location: {
-        type: 'Point',
-        coordinates: [8, 40.3],
-      },
-    },
-    driver: {
-      id: 'ijkl',
-      firstName: 'Rose',
-      lastName: 'McCarthy',
-    },
-    vehicle: {
-      regNumber: 'ghi789',
-      vehicleType: 'ute',
-    },
-    timestamp: new Date('2019-09-13T08:36:47'),
-  },
-]
-
-const mockHistory = [
-  {
-    sessionId: '123',
-    device: {
-      os: 'ios',
-      osVersion: '10.0.0',
-      location: {
-        type: 'Point',
-        coordinates: [10, 20.1],
-      },
-    },
-    driver: {
-      id: 'abcd',
-      firstName: 'John',
-      lastName: 'Doe',
-    },
-    vehicle: {
-      regNumber: 'abc123',
-      vehicleType: 'van',
-    },
-    timestamp: new Date('2019-09-13T08:36:12'),
-  },
-  {
-    sessionId: '123',
-    device: {
-      os: 'ios',
-      osVersion: '10.0.0',
-      location: {
-        type: 'Point',
-        coordinates: [12, 21.1],
-      },
-    },
-    driver: {
-      id: 'abcd',
-      firstName: 'John',
-      lastName: 'Doe',
-    },
-    vehicle: {
-      regNumber: 'abc123',
-      vehicleType: 'van',
-    },
-    timestamp: new Date('2019-09-13T08:35:12'),
-  },
-  {
-    sessionId: '123',
-    device: {
-      os: 'ios',
-      osVersion: '10.0.0',
-      location: {
-        type: 'Point',
-        coordinates: [13, 18.6],
-      },
-    },
-    driver: {
-      id: 'abcd',
-      firstName: 'John',
-      lastName: 'Doe',
-    },
-    vehicle: {
-      regNumber: 'abc123',
-      vehicleType: 'van',
-    },
-    timestamp: new Date('2019-09-13T08:34:12'),
-  },
-]
-/* tslint:enable */
-
-const applyFilterToActiveSession = (filterValue: IFilterValue, data: any[]) => {
+const applyFilterToActiveSession = (filterValue: IFilterValue, data: ISession[]) => {
   const regex = new RegExp(filterValue.filterText, 'i')
   if (filterValue.filterCategory === 'driver') {
     return data.filter((session) => {
@@ -177,9 +45,10 @@ export default function Main() {
     filterCategory: 'driver',
     filterText: '',
   })
-  const [selectedActiveSession, setSelectedActiveSession] = React.useState<any>(null)
+  const [selectedActiveSession, setSelectedActiveSession] = React.useState<ISession | null>(null)
+  const { activeSessions, loading } = useGetActiveSessions()
 
-  const handleRowClick = (row: any) => {
+  const handleRowClick = (row: ISession) => {
     if (selectedActiveSession !== null && selectedActiveSession.sessionId === row.sessionId) {
       setSelectedActiveSession(null)
     } else {
@@ -201,19 +70,6 @@ export default function Main() {
       header: 'Location (lat, long)',
     },
   ]
-
-  const historyColumnSpec: Array<IColSpec | string> = [
-    {
-      getFormattedValue: (session) => session.timestamp.toLocaleDateString(undefined, {dateStyle: 'medium', timeStyle: 'medium'}),
-      header: 'Timestamp',
-    },
-    {
-      getFormattedValue: (session) => `(${session.device.location.coordinates[1]}, ${session.device.location.coordinates[0]})`,
-      header: 'Location (lat, long)',
-    },
-  ]
-
-  const historyRowKey = (row: any) => row.timestamp.toISOString()
 
   const handleFilterChange = (value: IFilterValue) => setFilterValue(value)
 
@@ -240,7 +96,7 @@ export default function Main() {
               />
               <Table
                 columns={activeSessionColumnSpec}
-                data={applyFilterToActiveSession(filterValue, mockData)}
+                data={applyFilterToActiveSession(filterValue, activeSessions)}
                 rowKey="sessionId"
                 maxHeight={1200}
                 onRowClick={handleRowClick}
@@ -259,23 +115,7 @@ export default function Main() {
             </Card>
           </Grid>
           {selectedActiveSession && (
-            <Grid item xs={12}>
-              <Card>
-                <Box p={2}>
-                  <Typography variant="h6">
-                    Location history for&nbsp;
-                    {`${selectedActiveSession.driver.firstName} ${selectedActiveSession.driver.lastName}`}
-                    &nbsp;on&nbsp;
-                    {`${selectedActiveSession.vehicle.regNumber} (${selectedActiveSession.vehicle.vehicleType})`}
-                  </Typography>
-                </Box>
-                <Table
-                  columns={historyColumnSpec}
-                  data={mockHistory}
-                  rowKey={historyRowKey}
-                />
-              </Card>
-            </Grid>
+            <LocationHistoryGridItem session={selectedActiveSession} />
           )}
         </Grid>
       </Container>

@@ -1,6 +1,7 @@
 import React from 'react'
 
 import AppBar from '@material-ui/core/AppBar'
+import Box from '@material-ui/core/Box'
 import Card from '@material-ui/core/Card'
 import Container from '@material-ui/core/Container'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -42,7 +43,7 @@ const mockData = [
       regNumber: 'abc123',
       vehicleType: 'van',
     },
-    timestamp: new Date(),
+    timestamp: new Date('2019-09-13T08:36:12'),
   },
   {
     sessionId: '456',
@@ -63,7 +64,7 @@ const mockData = [
       regNumber: 'def456',
       vehicleType: 'truck',
     },
-    timestamp: new Date(),
+    timestamp: new Date('2019-09-13T08:36:20'),
   },
   {
     sessionId: '789',
@@ -84,7 +85,73 @@ const mockData = [
       regNumber: 'ghi789',
       vehicleType: 'ute',
     },
-    timestamp: new Date(),
+    timestamp: new Date('2019-09-13T08:36:47'),
+  },
+]
+
+const mockHistory = [
+  {
+    sessionId: '123',
+    device: {
+      os: 'ios',
+      osVersion: '10.0.0',
+      location: {
+        type: 'Point',
+        coordinates: [10, 20.1],
+      },
+    },
+    driver: {
+      id: 'abcd',
+      firstName: 'John',
+      lastName: 'Doe',
+    },
+    vehicle: {
+      regNumber: 'abc123',
+      vehicleType: 'van',
+    },
+    timestamp: new Date('2019-09-13T08:36:12'),
+  },
+  {
+    sessionId: '123',
+    device: {
+      os: 'ios',
+      osVersion: '10.0.0',
+      location: {
+        type: 'Point',
+        coordinates: [12, 21.1],
+      },
+    },
+    driver: {
+      id: 'abcd',
+      firstName: 'John',
+      lastName: 'Doe',
+    },
+    vehicle: {
+      regNumber: 'abc123',
+      vehicleType: 'van',
+    },
+    timestamp: new Date('2019-09-13T08:35:12'),
+  },
+  {
+    sessionId: '123',
+    device: {
+      os: 'ios',
+      osVersion: '10.0.0',
+      location: {
+        type: 'Point',
+        coordinates: [13, 18.6],
+      },
+    },
+    driver: {
+      id: 'abcd',
+      firstName: 'John',
+      lastName: 'Doe',
+    },
+    vehicle: {
+      regNumber: 'abc123',
+      vehicleType: 'van',
+    },
+    timestamp: new Date('2019-09-13T08:34:12'),
   },
 ]
 /* tslint:enable */
@@ -120,7 +187,7 @@ export default function Main() {
     }
   }
 
-  const columnsSpec: Array<IColSpec | string> = [
+  const activeSessionColumnSpec: Array<IColSpec | string> = [
     {
       getFormattedValue: (session) => `${session.driver.firstName} ${session.driver.lastName}`,
       header: 'Driver',
@@ -134,6 +201,19 @@ export default function Main() {
       header: 'Location (lat, long)',
     },
   ]
+
+  const historyColumnSpec: Array<IColSpec | string> = [
+    {
+      getFormattedValue: (session) => session.timestamp.toLocaleDateString(undefined, {dateStyle: 'medium', timeStyle: 'medium'}),
+      header: 'Timestamp',
+    },
+    {
+      getFormattedValue: (session) => `(${session.device.location.coordinates[1]}, ${session.device.location.coordinates[0]})`,
+      header: 'Location (lat, long)',
+    },
+  ]
+
+  const historyRowKey = (row: any) => row.timestamp.toISOString()
 
   const handleFilterChange = (value: IFilterValue) => setFilterValue(value)
 
@@ -151,6 +231,7 @@ export default function Main() {
 
       <Container className={classes.contentContainer}>
         <Grid container spacing={3}>
+          {/* TODO Both the active sessions list and map view can be factored out to simplify Main */}
           <Grid item xs={12} lg={6}>
             <Card>
               <SessionFilterInput
@@ -158,7 +239,7 @@ export default function Main() {
                 onChange={handleFilterChange}
               />
               <Table
-                columns={columnsSpec}
+                columns={activeSessionColumnSpec}
                 data={applyFilterToActiveSession(filterValue, mockData)}
                 rowKey="sessionId"
                 maxHeight={1200}
@@ -177,6 +258,25 @@ export default function Main() {
               </Typography>
             </Card>
           </Grid>
+          {selectedActiveSession && (
+            <Grid item xs={12}>
+              <Card>
+                <Box p={2}>
+                  <Typography variant="h6">
+                    Location history for&nbsp;
+                    {`${selectedActiveSession.driver.firstName} ${selectedActiveSession.driver.lastName}`}
+                    &nbsp;on&nbsp;
+                    {`${selectedActiveSession.vehicle.regNumber} (${selectedActiveSession.vehicle.vehicleType})`}
+                  </Typography>
+                </Box>
+                <Table
+                  columns={historyColumnSpec}
+                  data={mockHistory}
+                  rowKey={historyRowKey}
+                />
+              </Card>
+            </Grid>
+          )}
         </Grid>
       </Container>
     </React.Fragment>

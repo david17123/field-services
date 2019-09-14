@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 
 import { ISession } from './useGetActiveSessions'
 
-const GET_ACTIVE_SESSIONS = gql`
+export const GET_SESSION_HISTORY = gql`
   query getSessionHistory($sessionId: String) {
     session {
       getSessionHistory(sessionId: $sessionId) {
@@ -30,7 +30,7 @@ const GET_ACTIVE_SESSIONS = gql`
 `
 
 export default function useGetHistoryBySession(sessionId: string) {
-  const { data, loading } = useQuery(GET_ACTIVE_SESSIONS, {
+  const { data, loading } = useQuery(GET_SESSION_HISTORY, {
     variables: {
       sessionId,
     },

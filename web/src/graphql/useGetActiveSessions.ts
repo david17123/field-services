@@ -1,8 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 
-import { ISession } from './useGetActiveSessions'
-
 interface IGeojsonPoint {
   type: 'Point'
   coordinates: number[]
@@ -33,7 +31,7 @@ export interface ISession {
   timestamp: Date
 }
 
-const GET_ACTIVE_SESSIONS = gql`
+export const GET_ACTIVE_SESSIONS = gql`
   query getActiveSessions {
     session {
       getActiveSessions {

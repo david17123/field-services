@@ -1,5 +1,4 @@
 import { gql } from 'apollo-server'
-import { ObjectID } from 'mongodb'
 
 import { getDb } from '../db/connection'
 import { IGeojsonPoint } from '../db/modelTypes'
@@ -105,7 +104,7 @@ export const resolvers = {
     driver: async (session: any) => {
       const db = await getDb()
       const driverCollection = db.collection('driver')
-      const driver = await driverCollection.findOne({ _id: new ObjectID(session.driverId) })
+      const driver = await driverCollection.findOne({ _id: session.driverId })
       if (driver) {
         return driver
       }

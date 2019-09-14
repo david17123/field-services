@@ -2,13 +2,9 @@ import { gql } from 'apollo-server'
 import { ObjectID } from 'mongodb'
 
 import { getDb } from '../db/connection'
+import { IGeojsonPoint } from '../db/modelTypes'
 
 // TODO There might be a way to generate these interfaces from the schema
-interface IGeojsonPoint {
-  type: 'Point'
-  coordinates: number[]
-}
-
 interface IReportLocationArgs {
   sessionId: string
   point: IGeojsonPoint
@@ -109,9 +105,9 @@ export const resolvers = {
     driver: async (session: any) => {
       const db = await getDb()
       const driverCollection = db.collection('driver')
-      const driver = await driverCollection.find({ _id: new ObjectID(session.driverId) }).toArray()
-      if (driver && driver.length > 0) {
-        return driver[0]
+      const driver = await driverCollection.findOne({ _id: new ObjectID(session.driverId) })
+      if (driver) {
+        return driver
       }
       return {}
     },
@@ -132,6 +128,7 @@ export const resolvers = {
       const activeSessionCollection = db.collection('activeSession')
       const sessionHistoryCollection = db.collection('sessionHistory')
 
+      // Update active session
       const { sessionId, point } = args
       await activeSessionCollection.updateOne({ sessionId }, {
         $set: {
@@ -139,7 +136,9 @@ export const resolvers = {
           'timestamp': new Date(),
         },
       })
-      const updatedSession = (await activeSessionCollection.find({ sessionId }).toArray())[0]
+
+      // Save in session history
+      const updatedSession = await activeSessionCollection.findOne({ sessionId })
       await sessionHistoryCollection.insertOne({
         ...updatedSession,
         _id: null,

@@ -11,9 +11,9 @@ interface IReportLocationArgs {
 }
 
 interface IGetSessionHistoryArgs {
-  driverId: string
-  regNumber: string
-  sessionId: string
+  driverId?: string
+  regNumber?: string
+  sessionId?: string
 }
 
 export const typeDefs = gql`

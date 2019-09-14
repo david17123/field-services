@@ -3,7 +3,8 @@ import {
   getDb,
   setConnectionString,
 } from '../db/connection'
-import { activeSessions, sessionHistories } from '../db/factory'
+import { activeSessions, sessionHistories } from '../db/fixtures'
+import { ISession } from '../db/modelTypes'
 import { resolvers } from './session'
 
 describe('test session end points', () => {
@@ -32,12 +33,45 @@ describe('test session end points', () => {
     sessionHistoryCollection.deleteMany({})
   })
 
-  it('should fetch all currently active connections', async () => {
+  it('should fetch all currently active sessions', async () => {
     const activeSession = await resolvers.SessionQuery.getActiveSessions()
 
     expect(activeSession.length).toBe(activeSessions.length)
     // TODO Do some assertions that the active sessions returned are exactly
     // what we have mocked and only what we have mocked above
+  })
+
+  it('fetch session history by driverId', async () => {
+    const selectedSession = activeSessions[0]
+    const history = await resolvers.SessionQuery.getSessionHistory(null, {
+      driverId: selectedSession.driverId.toHexString(),
+    })
+
+    expect(history.length).toBe(sessionHistories.filter(
+      (s: ISession) => s.driverId.toHexString() === selectedSession.driverId.toHexString(),
+    ).length)
+  })
+
+  it('fetch session history by vehicle regNumber', async () => {
+    const selectedSession = activeSessions[0]
+    const history = await resolvers.SessionQuery.getSessionHistory(null, {
+      regNumber: selectedSession.vehicle.regNumber,
+    })
+
+    expect(history.length).toBe(sessionHistories.filter(
+      (s: ISession) => s.vehicle.regNumber === selectedSession.vehicle.regNumber,
+    ).length)
+  })
+
+  it('fetch session history by vehicle sessionId', async () => {
+    const selectedSession = activeSessions[0]
+    const history = await resolvers.SessionQuery.getSessionHistory(null, {
+      sessionId: selectedSession.sessionId,
+    })
+
+    expect(history.length).toBe(sessionHistories.filter(
+      (s: ISession) => s.sessionId === selectedSession.sessionId,
+    ).length)
   })
 
   it('update location for a session', async () => {
@@ -53,10 +87,7 @@ describe('test session end points', () => {
     const activeSessionCollection = db.collection('activeSession')
     const sessionHistoryCollection = db.collection('sessionHistory')
 
-    const activeSession = (await activeSessionCollection
-      .find({ sessionId: activeSessions[0].sessionId })
-      .toArray()
-    )[0]
+    const activeSession = await activeSessionCollection.findOne({ sessionId: activeSessions[0].sessionId })
     expect(activeSession.device.location.coordinates[0]).toBe(15)
     expect(activeSession.device.location.coordinates[1]).toBe(23.2)
 
@@ -73,6 +104,4 @@ describe('test session end points', () => {
       expect(activeSession[field]).toEqual(lastSessionHistory[field])
     }
   })
-
-  // TODO Write tests for the other GraphQL end points
 })

@@ -56,12 +56,12 @@ export const typeDefs = gql`
 
   type DriverMutation {
     login(driver: DriverInput!, device: DeviceDetailsInput!): LoginResponse
-    logout(sessionId: String): Boolean
-    setVehicle(sessionId: String, vehicle: VehicleInput!): Boolean
+    logout(sessionId: ID!): Boolean
+    setVehicle(sessionId: ID!, vehicle: VehicleInput!): Boolean
   }
 
   type LoginResponse {
-    sessionId: String
+    sessionId: ID
     driverId: ID
   }
 `

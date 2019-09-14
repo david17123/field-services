@@ -1,4 +1,5 @@
 import { gql } from 'apollo-server'
+import { ObjectID } from 'mongodb'
 
 import { getDb } from '../db/connection'
 import { IGeojsonPoint } from '../db/modelTypes'
@@ -27,7 +28,7 @@ export const typeDefs = gql`
 
   type SessionQuery {
     getActiveSessions: [Session]
-    getSessionHistory(driverId: String, regNumber: String, sessionId: String): [Session]
+    getSessionHistory(driverId: ID, regNumber: String, sessionId: ID): [Session]
   }
 
   type Driver {
@@ -42,7 +43,7 @@ export const typeDefs = gql`
   }
 
   type Session {
-    sessionId: String
+    sessionId: ID
     device: Device
     driver: Driver
     vehicle: Vehicle
@@ -71,7 +72,7 @@ export const typeDefs = gql`
   }
 
   type SessionMutation {
-    reportLocation(sessionId: String, point: GeojsonPointInput!): Boolean
+    reportLocation(sessionId: ID!, point: GeojsonPointInput!): Boolean
   }
 `
 
@@ -90,7 +91,7 @@ export const resolvers = {
       const db = await getDb()
       const sessionHistoryCollection = db.collection('sessionHistory')
       if (args.driverId) {
-        return sessionHistoryCollection.find({ driverId: args.driverId }).toArray()
+        return sessionHistoryCollection.find({ driverId: new ObjectID(args.driverId) }).toArray()
       } else if (args.regNumber) {
         return sessionHistoryCollection.find({ 'vehicle.regNumber': args.regNumber }).toArray()
       } else if (args.sessionId) {

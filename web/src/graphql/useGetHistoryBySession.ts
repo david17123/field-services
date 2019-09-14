@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import { ISession } from './useGetActiveSessions'
 
 export const GET_SESSION_HISTORY = gql`
-  query getSessionHistory($sessionId: String) {
+  query getSessionHistory($sessionId: ID) {
     session {
       getSessionHistory(sessionId: $sessionId) {
         sessionId

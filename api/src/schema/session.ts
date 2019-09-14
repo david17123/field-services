@@ -83,11 +83,13 @@ export const resolvers = {
 
   SessionQuery: {
     getActiveSessions: async () => {
+      // TODO Consider to paginate this to make it more scalable
       const db = await getDb()
       const activeSessionCollection = db.collection('activeSession')
       return activeSessionCollection.find().toArray()
     },
     getSessionHistory: async (root: any, args: IGetSessionHistoryArgs) => {
+      // TODO Consider to paginate this to make it more scalable
       const db = await getDb()
       const sessionHistoryCollection = db.collection('sessionHistory')
       if (args.driverId) {

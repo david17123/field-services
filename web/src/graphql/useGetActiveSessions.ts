@@ -31,6 +31,7 @@ export interface ISession {
   timestamp: Date
 }
 
+// TODO Ideally this would use subscription instead of query for real time updates
 export const GET_ACTIVE_SESSIONS = gql`
   query getActiveSessions {
     session {

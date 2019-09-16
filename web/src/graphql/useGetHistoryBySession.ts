@@ -3,6 +3,7 @@ import gql from 'graphql-tag'
 
 import { ISession } from './useGetActiveSessions'
 
+// TODO Ideally this would use subscription instead of query for real time updates
 export const GET_SESSION_HISTORY = gql`
   query getSessionHistory($sessionId: ID) {
     session {

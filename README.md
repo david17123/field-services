@@ -6,7 +6,7 @@ is needed to make a complete system.
 ## Set up
 1. Install `docker` and `docker-compose`
 2. Run `docker-compose up`
-3. Go to `localhost:5000` for dashboard, and `localhost:4000` for GraphQL
+3. Go to `localhost:8080` for dashboard, and `localhost:4000` for GraphQL
 Playground.
 
 This repository has a simple db dump that contain some mock data to seed the

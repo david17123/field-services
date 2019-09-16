@@ -4,7 +4,7 @@
   "description": "Field service API server",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --runInBand",
     "build": "webpack --env.production",
     "start": "nodemon -w './src/**/*.ts' -i './src/**/*.spec.ts' -x 'npx ts-node' ./src/index.ts",
     "lint": "tslint ./src/*"
